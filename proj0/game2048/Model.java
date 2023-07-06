@@ -138,9 +138,9 @@ public class Model extends Observable {
     public static boolean emptySpaceExists(Board b) {
         int boardSize = b.size();
 
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                if (isTileEmpty(b, j, i)) {
+        for (int r = 0; r < boardSize; r++) {
+            for (int c = 0; c < boardSize; c++) {
+                if (isTileEmpty(b, c, r)) {
                     return true;
                 }
             }
@@ -157,9 +157,9 @@ public class Model extends Observable {
     public static boolean maxTileExists(Board b) {
         int boardSize = b.size();
 
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                if (!isTileEmpty(b, j, i) && b.tile(j, i).value() == MAX_PIECE) {
+        for (int r = 0; r < boardSize; r++) {
+            for (int c = 0; c < boardSize; c++) {
+                if (!isTileEmpty(b, c, r) && b.tile(c, r).value() == MAX_PIECE) {
                     return true;
                 }
             }
@@ -190,10 +190,10 @@ public class Model extends Observable {
     private static boolean checkIfBoardHasSameAdjacentTiles(Board b) {
         int boardSize = b.size();
 
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                if (!isTileEmpty(b, j, i)) {
-                    if (checkIfRightTileSame(b, j + 1, i) || checkIfDownTileSame(b, j, i + 1)) {
+        for (int r = 0; r < boardSize; r++) {
+            for (int c = 0; c < boardSize; c++) {
+                if (!isTileEmpty(b, c, r)) {
+                    if (checkIfRightTileSame(b, c + 1, r) || checkIfDownTileSame(b, c, r + 1)) {
                         return true;
                     }
                 }
