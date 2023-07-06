@@ -1,5 +1,6 @@
 package game2048;
 
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.Observable;
 
@@ -109,15 +110,79 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
-        // for the tilt to the Side SIDE. If the board changed, set the
-        // changed local variable to true.
+        this.board.setViewingPerspective(side);
+        int boardSize = this.board.size();
+
+        for (int c = 0; c < boardSize; c++) {
+            if (tiltHelper(c)) {
+                changed = true;
+            }
+        }
+
+        this.board.setViewingPerspective(Side.NORTH);
 
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+
+    /**
+     * Returns true if tiles in a particular column of board
+     * is moved or merged.
+     */
+    private boolean tiltHelper(int col) {
+        boolean changed = false;
+        int boardSize = this.board.size();
+
+        boolean[] tileMerged = new boolean[boardSize];
+        Arrays.fill(tileMerged, false);
+
+        for (int r = boardSize - 1; r >= 0; r--) {
+            if (!isTileEmpty(this.board, col, r)) {
+                int changeIndex = indexToMoveOrMerge(col, r, tileMerged);
+                if (changeIndex != -1) {
+                    changed = true;
+                    if (this.board.move(col, changeIndex, board.tile(col, r))) {
+                        tileMerged[changeIndex] = true;
+                        this.score += this.board.tile(col, changeIndex).value();
+                    }
+                }
+            }
+        }
+
+        return changed;
+    }
+
+    /**
+     * Returns Index At Which Move Or Merge Operation
+     * Is To Be Performed Else Returns -1
+     */
+    private int indexToMoveOrMerge(int col, int row, boolean[] tilesMerged) {
+        int rowIndex = -1;
+
+        for (int r = this.board.size() - 1; r > row; r--) {
+            if (isTileEmpty(this.board, col, r)) {
+                if (rowIndex == -1) {
+                    rowIndex = r;
+                }
+            }
+            else {
+                if (this.board.tile(col, row).value() == this.board.tile(col, r).value()) {
+                    if (!tilesMerged[r]) {
+                        rowIndex = r;
+                    }
+                }
+                else {
+                    if (rowIndex != -1) {
+                        rowIndex = -1;
+                    }
+                }
+            }
+        }
+
+        return rowIndex;
     }
 
     /** Checks if the game is over and sets the gameOver variable
