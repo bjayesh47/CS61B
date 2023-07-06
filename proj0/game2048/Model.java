@@ -181,10 +181,56 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+        return emptySpaceExists(b) || checkIfBoardHasSameAdjacentTiles(b);
+    }
+
+    /**
+     * Returns true if board has same adjacent tiles.
+     */
+    private static boolean checkIfBoardHasSameAdjacentTiles(Board b) {
+        int boardSize = b.size();
+
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                if (!isTileEmpty(b, j, i)) {
+                    if (checkIfRightTileSame(b, j + 1, i) || checkIfDownTileSame(b, j, i + 1)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
         return false;
     }
 
+    /**
+     * Returns true if right tile exists and has same value as
+     * current tile.
+     */
+    private static boolean checkIfRightTileSame(Board b, int col, int row) {
+        return isValidIndex(b, col, row)
+                && !isTileEmpty(b, col, row)
+                && (b.tile(col - 1, row).value() == b.tile(col, row).value());
+    }
+
+    /**
+     * Returns true if down tile exists and has same value as
+     * current tile.
+     */
+    private static boolean checkIfDownTileSame(Board b, int col, int row) {
+        return isValidIndex(b, col, row)
+                && !isTileEmpty(b, col, row)
+                && (b.tile(col , row - 1).value() == b.tile(col, row).value());
+    }
+
+    /**
+     * Returns true if given column index and row index
+     * is valid
+     */
+    private static boolean isValidIndex(Board b, int col, int row) {
+        int boardSize = b.size();
+        return col < boardSize && row < boardSize;
+    }
 
     @Override
      /** Returns the model as a string, used for debugging. */
